@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import sys
 import re
@@ -81,9 +81,9 @@ def main():
             # Add context trace
             context_note = "\n\n---\n"
             if event_name == "pull_request" and pr_number:
-                context_note += f"🔍 *Bu sorun, ReviewForge AI tarafından [PR #{pr_number}] numaralı kod incelemesi sırasında otomatik olarak tespit edilmiştir.*"
+                context_note += f"ğŸ” *Bu sorun, ReviewForge AI tarafÄ±ndan [PR #{pr_number}] numaralÄ± kod incelemesi sÄ±rasÄ±nda otomatik olarak tespit edilmiÅŸtir.*"
             elif event_name == "push" and commit_sha:
-                context_note += f"🔍 *Bu sorun, ReviewForge AI tarafından `{commit_sha[:7]}` numaralı commit incelemesi sırasında otomatik olarak tespit edilmiştir.*"
+                context_note += f"ğŸ” *Bu sorun, ReviewForge AI tarafÄ±ndan `{commit_sha[:7]}` numaralÄ± commit incelemesi sÄ±rasÄ±nda otomatik olarak tespit edilmiÅŸtir.*"
             
             # Clean JSON from the issue body
             issue_body = review_result.replace(json_match.group(0), "").strip() + context_note
@@ -92,17 +92,17 @@ def main():
             issue_resp = create_github_issue(repo_full_name, issue_title, issue_body, labels)
             if issue_resp:
                 issue_url = issue_resp.get("html_url")
-                print(f"🚨 Kritik hata bulundu, Etiketli Issue Açıldı! URL: {issue_url}")
+                print(f"ğŸš¨ Kritik hata bulundu, Etiketli Issue AÃ§Ä±ldÄ±! URL: {issue_url}")
                 
             # Clean JSON from the PR comment and add a note
             final_review_body = review_result.replace(json_match.group(0), "").strip()
             if issue_url:
-                final_review_body += f"\n\n🚨 **DİKKAT:** Bu PR'da kritik bir sorun tespit ettim ve detayları için otomatik olarak [şu Issue'yu açtım]({issue_url})."
+                final_review_body += f"\n\nğŸš¨ **DÄ°KKAT:** Bu PR'da kritik bir sorun tespit ettim ve detaylarÄ± iÃ§in otomatik olarak [ÅŸu Issue'yu aÃ§tÄ±m]({issue_url})."
                 
         except Exception as e:
-            print(f"JSON Parse hatası: {e}")
+            print(f"JSON Parse hatasÄ±: {e}")
 
-    comment_body = f"### 🛡️ ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\n{final_review_body}"
+    comment_body = f"### ğŸ›¡ï¸ ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\n{final_review_body}"
     
     if event_name == "pull_request" and pr_number:
         post_pr_comment(repo_full_name, pr_number, comment_body)

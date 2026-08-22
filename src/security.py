@@ -1,13 +1,13 @@
-import hmac
+﻿import hmac
 import hashlib
 import os
 
-# Güvenli bir şekilde environment variable üzerinden okunmalı.
+# GÃ¼venli bir ÅŸekilde environment variable Ã¼zerinden okunmalÄ±.
 GITHUB_SECRET = os.getenv("GITHUB_WEBHOOK_SECRET", "")
 
 def verify_signature(payload_body: bytes, signature_header: str) -> bool:
     if not GITHUB_SECRET:
-        # Secret yapılandırılmamışsa local test içindir, geçici olarak izin ver (prod için değiştirilmeli)
+        # Secret yapÄ±landÄ±rÄ±lmamÄ±ÅŸsa local test iÃ§indir, geÃ§ici olarak izin ver (prod iÃ§in deÄŸiÅŸtirilmeli)
         return True
     
     if not signature_header:

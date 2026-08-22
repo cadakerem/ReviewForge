@@ -1,4 +1,4 @@
-import os
+﻿import os
 from openai import OpenAI
 
 # Multi-Provider Configuration
@@ -36,36 +36,36 @@ def analyze_diff(diff_text: str, mode: str, custom_rules: str = "") -> str:
     """
     client = get_client()
     if not client:
-        return f"[MOCK REVIEW] AI_API_KEY ayarlanmadığı için analiz simüle edildi. ({mode})"
+        return f"[MOCK REVIEW] AI_API_KEY ayarlanmadÄ±ÄŸÄ± iÃ§in analiz simÃ¼le edildi. ({mode})"
 
     model_name = DEEP_MODEL if mode == "DEEP_ANALYSIS" else LIGHT_MODEL
     
     if mode == "DEEP_ANALYSIS":
         system_prompt = (
-            "Sen kıdemli bir Security Engineer ve Software Architect'sin. Aşağıdaki kod diff'ini kritik güvenlik zafiyetleri, mimari hatalar ve performans sorunları için derinlemesine incele.\n\n"
-            "ÖNEMLİ KURAL: Sadece sorunu söyleyip bırakma. Geliştiricinin kopyalayıp yapıştırarak sorunu anında çözebileceği DÜZELTİLMİŞ KOD bloğunu da mutlaka ver.\n\n"
-            "ISSUE KURALI: Eğer kodda projenin çökmesine veya hacklenmesine yol açacak KESİN ve KRİTİK bir hata bulursan, "
-            "cevabının en sonuna MUTLAKA şu formatta bir JSON bloğu ekle:\n"
+            "Sen kÄ±demli bir Security Engineer ve Software Architect'sin. AÅŸaÄŸÄ±daki kod diff'ini kritik gÃ¼venlik zafiyetleri, mimari hatalar ve performans sorunlarÄ± iÃ§in derinlemesine incele.\n\n"
+            "Ã–NEMLÄ° KURAL: Sadece sorunu sÃ¶yleyip bÄ±rakma. GeliÅŸtiricinin kopyalayÄ±p yapÄ±ÅŸtÄ±rarak sorunu anÄ±nda Ã§Ã¶zebileceÄŸi DÃœZELTÄ°LMÄ°Å KOD bloÄŸunu da mutlaka ver.\n\n"
+            "ISSUE KURALI: EÄŸer kodda projenin Ã§Ã¶kmesine veya hacklenmesine yol aÃ§acak KESÄ°N ve KRÄ°TÄ°K bir hata bulursan, "
+            "cevabÄ±nÄ±n en sonuna MUTLAKA ÅŸu formatta bir JSON bloÄŸu ekle:\n"
             "```json\n"
-            '{"create_issue": true, "title": "Sorunun Kısa Başlığı", "labels": ["bug", "security"]}\n'
+            '{"create_issue": true, "title": "Sorunun KÄ±sa BaÅŸlÄ±ÄŸÄ±", "labels": ["bug", "security"]}\n'
             "```\n"
-            "Etiketleri (labels) sorunun türüne göre ('bug', 'security', 'performance', 'architecture') mantıklı şekilde seçebilirsin."
+            "Etiketleri (labels) sorunun tÃ¼rÃ¼ne gÃ¶re ('bug', 'security', 'performance', 'architecture') mantÄ±klÄ± ÅŸekilde seÃ§ebilirsin."
         )
     else:
         system_prompt = (
-            "Sen hızlı ve pratik bir Code Reviewer'sın. Bu diff'i bariz bug'lar, typo'lar ve basit stil hataları için incele. "
-            "Çok kısa ve net ol. Gereksiz gevezelik yapma. Sadece hatayı göster ve geliştiricinin kopyalayabilmesi için DOĞRU KODU (Auto-Fix) yaz."
+            "Sen hÄ±zlÄ± ve pratik bir Code Reviewer'sÄ±n. Bu diff'i bariz bug'lar, typo'lar ve basit stil hatalarÄ± iÃ§in incele. "
+            "Ã‡ok kÄ±sa ve net ol. Gereksiz gevezelik yapma. Sadece hatayÄ± gÃ¶ster ve geliÅŸtiricinin kopyalayabilmesi iÃ§in DOÄRU KODU (Auto-Fix) yaz."
         )
 
     if custom_rules:
-        system_prompt += f"\n\nAYRICA DİKKAT ETMEN GEREKEN ŞİRKETE ÖZEL KURALLAR ŞUNLARDIR:\n{custom_rules}"
+        system_prompt += f"\n\nAYRICA DÄ°KKAT ETMEN GEREKEN ÅÄ°RKETE Ã–ZEL KURALLAR ÅUNLARDIR:\n{custom_rules}"
 
     try:
         completion = client.chat.completions.create(
             model=model_name,
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Lütfen şu diff'i incele:\n\n```diff\n{diff_text}\n```"}
+                {"role": "user", "content": f"LÃ¼tfen ÅŸu diff'i incele:\n\n```diff\n{diff_text}\n```"}
             ],
             temperature=0.2,
             top_p=0.7,
@@ -73,4 +73,4 @@ def analyze_diff(diff_text: str, mode: str, custom_rules: str = "") -> str:
         )
         return completion.choices[0].message.content
     except Exception as e:
-        return f"[ERROR] AI analiz hatası ({model_name}): {str(e)}"
+        return f"[ERROR] AI analiz hatasÄ± ({model_name}): {str(e)}"

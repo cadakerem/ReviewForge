@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, Header
+﻿from fastapi import FastAPI, Request, HTTPException, Header
 from src.security import verify_signature
 from src.router import route_analysis
 import uvicorn
@@ -49,7 +49,7 @@ async def github_webhook(
             if not diff_text.startswith("[ERROR]"):
                 review_result = analyze_diff(diff_text, analysis_mode)
                 
-                comment_body = f"### 🛡️ ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\n{review_result}"
+                comment_body = f"### ğŸ›¡ï¸ ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\n{review_result}"
                 
                 if x_github_event == "pull_request" and pr_number:
                     posted = post_pr_comment(repo_full_name, pr_number, comment_body)
