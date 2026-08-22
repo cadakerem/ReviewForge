@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Run ReviewForge AI
-        uses: cadakerem/ReviewForge@v1.0.1
+        uses: cadakerem/ReviewForge@v1.0.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           ai_provider: "gemini" 
