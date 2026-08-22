@@ -1,44 +1,77 @@
-# 🚀 [TODO: Project Name]
+<div align="center">
+  <h1>🛡️ ReviewForge</h1>
+  <p><b>Autonomous SecOps & Code Review AI Agent (Serverless GitHub Action)</b></p>
+  <img src="https://img.shields.io/badge/AI_Provider-Gemini_|_OpenAI_|_Nvidia-blue.svg" alt="AI Providers" />
+  <img src="https://img.shields.io/badge/Platform-GitHub_Actions-2088FF.svg?logo=github" alt="Platform" />
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License" />
+</div>
 
-> 💡 [TODO: A short, catchy description of what this Python project does and why it exists.]
+<br>
 
-![Cover Image](https://via.placeholder.com/800x400?text=[TODO:+Project+Banner])
+**ReviewForge** is not just a passive linter. It is a proactive, AI-driven Security Operations (SecOps) and Code Review engineer that lives directly inside your GitHub workflows. 
 
-## 📌 Features
+Whenever a developer pushes code or opens a Pull Request, ReviewForge analyzes the changes. If it spots a typo, it leaves a polite PR comment. **If it detects a critical security vulnerability or architectural flaw, it autonomously creates a labeled GitHub Issue, links it to your PR, and alerts your team.**
 
-- **[TODO: Feature 1]:** [TODO: Description of feature 1.]
-- **[TODO: Feature 2]:** [TODO: Description of feature 2.]
-- **[TODO: Feature 3]:** [TODO: Description of feature 3.]
+## 🌟 Key Features
 
-## 🛠️ Architecture & Under the Hood
+- 🧠 **Multi-Provider AI:** Out-of-the-box support for Google Gemini, OpenAI, Nvidia NIM, Groq, or any OpenAI-compatible endpoint. No vendor lock-in!
+- 🚦 **Agentic Routing:** Smart routing ensures small UI tweaks get a fast, cheap review (e.g., `gemini-2.5-flash`), while complex core changes get deep security analysis (e.g., `gemini-3.1-pro` or `nemotron-3-ultra`).
+- 🚨 **Autonomous Issue Creation:** When the AI detects a critical bug or security flaw, it automatically opens a GitHub Issue with the correct labels (`bug`, `security`, `architecture`) and cross-references the offending PR.
+- ⚡ **Serverless:** Runs entirely on GitHub Actions. Zero servers to maintain. Zero webhook configs. Zero hosting costs.
 
-- **Language:** Python 3
-- **Libraries:** [TODO: List key libraries used.]
-- **Design Pattern:** [TODO: Mention any specific design patterns or algorithms.]
+## 🚀 Quick Setup (GitHub Actions)
 
-## 📦 Installation
+Add ReviewForge to any repository in **under 30 seconds**. 
 
-```bash
-# Clone the repository
-git clone https://github.com/cadakerem/[TODO: project-name].git
-cd [TODO: project-name]
+Create a workflow file in your repo at `.github/workflows/reviewforge.yml`:
 
-# Install requirements
-pip install -r requirements.txt
+```yaml
+name: ReviewForge SecOps
+on: [pull_request, push]
+
+jobs:
+  ai_review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Run ReviewForge AI
+        uses: cadakerem/ReviewForge@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          ai_provider: "gemini" 
+          ai_api_key: ${{ secrets.GEMINI_API_KEY }}
+          # Optional Configuration (Defaults shown below)
+          # light_model: "gemini-2.5-flash"
+          # deep_model: "gemini-3.1-pro"
 ```
 
-## 🎮 Usage
+> **Note:** Don't forget to add your `GEMINI_API_KEY` (or OpenAI/Nvidia key) to your repository's [GitHub Secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
 
-[TODO: Explain how to use the project here. Provide code examples or CLI commands.]
+## ⚙️ Configuration Options
 
-```bash
-# Example command
-python src/main.py
-```
+| Input | Description | Default | Required |
+| --- | --- | --- | --- |
+| `github_token` | GitHub token for posting comments/issues. | `${{ github.token }}` | Yes |
+| `ai_provider` | `gemini`, `openai`, `nvidia`, `groq` | `gemini` | Yes |
+| `ai_api_key` | Your AI provider's API Key. | - | Yes |
+| `light_model` | Faster model used for standard changes. | `gemini-2.5-flash` | No |
+| `deep_model` | Advanced model used for complex/security PRs. | `gemini-3.1-pro` | No |
+
+## 🛡️ How the Autonomous Issue Creator Works
+
+ReviewForge's AI engine is instructed to output a specific JSON payload if a change is highly destructive (e.g., SQL Injection, unauthenticated endpoint). 
+
+When the underlying Python engine detects this JSON output from the AI, it intercepts it, creates a formal GitHub Issue tagged with `bug` or `security`, and then leaves a warning comment on the developer's PR linking to the newly created issue ticket.
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!
+Contributions, issues, and feature requests are always welcome! Feel free to check the issues page.
 
 ## 📜 License
 
