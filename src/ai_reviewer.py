@@ -46,11 +46,11 @@ def analyze_diff(diff_text: str, mode: str, custom_rules: str = "") -> str:
             "Deeply analyze the following code diff for critical security vulnerabilities, architectural flaws, and performance issues.\n\n"
             "IMPORTANT RULE: Do not just point out the problem. Always provide the FIXED CODE BLOCK "
             "that the developer can copy-paste to resolve the issue immediately.\n\n"
-            "ISSUE RULE: If you find a definitive, CRITICAL bug that could crash or compromise the project, "
-            "you MUST append the following JSON block at the very end of your response:\n"
+            "If you find critical vulnerabilities, you MUST append the following exact JSON block at the very end of your response, starting with ```json and ending with ```:\n"
             "```json\n"
-            '{"create_issue": true, "title": "Short Issue Title", "labels": ["bug", "security"]}\n'
+            '{"create_issue": true, "title": "Critical Security Issue Detected", "labels": ["bug", "security"]}\n'
             "```\n"
+            "WARNING: You must output this exact JSON block or the CI pipeline will crash.        "
             "Choose labels intelligently based on the type of issue: 'bug', 'security', 'performance', or 'architecture'."
         )
     else:

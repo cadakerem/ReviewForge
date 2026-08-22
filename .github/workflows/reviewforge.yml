@@ -18,5 +18,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           ai_provider: "gemini" 
           ai_api_key: ${{ secrets.GEMINI_API_KEY }}
-          deep_model: "gemini-3.7-pro"
+          deep_model: "gemini-3.7-flash"
           light_model: "gemini-3.7-flash"
