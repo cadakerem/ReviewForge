@@ -51,3 +51,24 @@ def post_commit_comment(repo_full_name: str, commit_sha: str, body: str) -> bool
         
     response = requests.post(url, headers=get_headers(), json=payload)
     return response.status_code == 201
+
+def create_github_issue(repo_full_name: str, title: str, body: str, labels: list) -> dict:
+    """
+    Kritik durumlarda doğrudan etiketli bir Issue açar.
+    """
+    url = f"https://api.github.com/repos/{repo_full_name}/issues"
+    payload = {
+        "title": f"🚨 [ReviewForge] {title}",
+        "body": body,
+        "labels": labels
+    }
+    
+    if not GITHUB_TOKEN:
+        print(f"[MOCK] Token yok. Issue açılmış gibi simüle edildi: {title}")
+        return {"html_url": "https://github.com/mock/issue/1", "number": 1}
+        
+    response = requests.post(url, headers=get_headers(), json=payload)
+    if response.status_code == 201:
+        return response.json()
+    print(f"[ERROR] Issue açılamadı: {response.status_code} - {response.text}")
+    return {}

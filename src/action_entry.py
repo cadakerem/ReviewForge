@@ -1,6 +1,7 @@
 import os
 import json
 import sys
+import re
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -57,7 +58,43 @@ def main():
     
     review_result = analyze_diff(diff_text, analysis_mode)
     
-    comment_body = f"### 🛡️ ReviewForge AI Analysis\\n\\n**Mode:** `{analysis_mode}`\\n\\n{review_result}"
+    # Check for issue creation JSON
+    json_match = re.search(r'```json\s*(\{.*?"create_issue":\s*true.*?\})\s*```', review_result, re.DOTALL)
+    
+    issue_url = None
+    final_review_body = review_result
+    
+    if json_match:
+        try:
+            issue_data = json.loads(json_match.group(1))
+            issue_title = issue_data.get("title", "Critical Vulnerability Detected")
+            labels = issue_data.get("labels", ["bug", "security"])
+            
+            # Add context trace
+            context_note = "\n\n---\n"
+            if event_name == "pull_request" and pr_number:
+                context_note += f"🔍 *Bu sorun, ReviewForge AI tarafından [PR #{pr_number}] numaralı kod incelemesi sırasında otomatik olarak tespit edilmiştir.*"
+            elif event_name == "push" and commit_sha:
+                context_note += f"🔍 *Bu sorun, ReviewForge AI tarafından `{commit_sha[:7]}` numaralı commit incelemesi sırasında otomatik olarak tespit edilmiştir.*"
+            
+            # Clean JSON from the issue body
+            issue_body = review_result.replace(json_match.group(0), "").strip() + context_note
+            
+            from src.github import create_github_issue
+            issue_resp = create_github_issue(repo_full_name, issue_title, issue_body, labels)
+            if issue_resp:
+                issue_url = issue_resp.get("html_url")
+                print(f"🚨 Kritik hata bulundu, Etiketli Issue Açıldı! URL: {issue_url}")
+                
+            # Clean JSON from the PR comment and add a note
+            final_review_body = review_result.replace(json_match.group(0), "").strip()
+            if issue_url:
+                final_review_body += f"\n\n🚨 **DİKKAT:** Bu PR'da kritik bir sorun tespit ettim ve detayları için otomatik olarak [şu Issue'yu açtım]({issue_url})."
+                
+        except Exception as e:
+            print(f"JSON Parse hatası: {e}")
+
+    comment_body = f"### 🛡️ ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\n{final_review_body}"
     
     if event_name == "pull_request" and pr_number:
         post_pr_comment(repo_full_name, pr_number, comment_body)
@@ -65,6 +102,7 @@ def main():
     elif event_name == "push" and commit_sha:
         post_commit_comment(repo_full_name, commit_sha, comment_body)
         print("Comment posted to Commit.")
+
     
 if __name__ == "__main__":
     main()

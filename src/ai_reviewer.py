@@ -41,7 +41,15 @@ def analyze_diff(diff_text: str, mode: str) -> str:
     model_name = DEEP_MODEL if mode == "DEEP_ANALYSIS" else LIGHT_MODEL
     
     if mode == "DEEP_ANALYSIS":
-        system_prompt = "Sen kıdemli bir Security Engineer ve Software Architect'sin. Aşağıdaki kod diff'ini kritik güvenlik zafiyetleri, mimari hatalar ve performans sorunları için derinlemesine incele."
+        system_prompt = (
+            "Sen kıdemli bir Security Engineer ve Software Architect'sin. Aşağıdaki kod diff'ini kritik güvenlik zafiyetleri, mimari hatalar ve performans sorunları için derinlemesine incele.\n\n"
+            "ÖNEMLİ KURAL: Eğer kodda projenin çökmesine veya hacklenmesine yol açacak KESİN ve KRİTİK bir hata bulursan, "
+            "cevabının en sonuna MUTLAKA şu formatta bir JSON bloğu ekle:\n"
+            "```json\n"
+            '{"create_issue": true, "title": "Sorunun Kısa Başlığı", "labels": ["bug", "security"]}\n'
+            "```\n"
+            "Etiketleri (labels) sorunun türüne göre ('bug', 'security', 'performance', 'architecture') mantıklı şekilde seçebilirsin."
+        )
     else:
         system_prompt = "Sen hızlı ve pratik bir Code Reviewer'sın. Bu diff'i bariz bug'lar, typo'lar ve basit stil hataları için incele. Çok kısa ve net ol."
 
