@@ -30,7 +30,7 @@ def fetch_pr_files(repo_full_name: str, pr_number: int) -> list:
     Returns a list of filename strings.
     """
     url = f"https://api.github.com/repos/{repo_full_name}/pulls/{pr_number}/files"
-    response = requests.get(url, headers=get_headers())
+    response = requests.get(url, headers=get_headers(), params={"per_page": 100})
     if response.status_code == 200:
         return [f["filename"] for f in response.json()]
     print(f"[Warning] Could not fetch PR files: HTTP {response.status_code}")
