@@ -46,6 +46,7 @@ def analyze_diff(diff_text: str, mode: str, custom_rules: str = "") -> str:
             "Deeply analyze the following code diff for critical security vulnerabilities, architectural flaws, and performance issues.\n\n"
             "IMPORTANT RULE: Do not just point out the problem. Always provide the FIXED CODE BLOCK "
             "that the developer can copy-paste to resolve the issue immediately.\n\n"
+            "TOKEN CONSERVATION RULE: DO NOT rewrite the entire file! Only provide the specific function, class, or lines that need to be changed.\n\n"
             "If you find critical vulnerabilities, you MUST append the following exact JSON block at the very end of your response, starting with ```json and ending with ```:\n"
             "```json\n"
             '{"create_issue": true, "title": "Critical Security Issue Detected", "labels": ["bug", "security"]}\n'

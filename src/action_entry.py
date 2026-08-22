@@ -63,6 +63,12 @@ def main():
         print("Diff is empty. Nothing to review.")
         sys.exit(0)
 
+    # DIFF TRUNCATION (Anti-DoS / Cost Protection)
+    MAX_DIFF_LENGTH = 20000 # Approx 5000-7000 tokens
+    if len(diff_text) > MAX_DIFF_LENGTH:
+        print(f"[Warning] Diff is too large ({len(diff_text)} chars). Truncating to {MAX_DIFF_LENGTH} chars to prevent token exhaustion.")
+        diff_text = diff_text[:MAX_DIFF_LENGTH] + "\n\n... [DIFF TRUNCATED TO PREVENT TOKEN EXHAUSTION] ..."
+
     # Load optional custom rules
     custom_rules = ""
     rules_path = os.path.join(os.getenv("GITHUB_WORKSPACE", "."), ".reviewforge.md")
