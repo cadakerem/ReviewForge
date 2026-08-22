@@ -1,0 +1,20 @@
+name: ReviewForge SecOps
+on: [pull_request, push]
+
+jobs:
+  ai_review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Run ReviewForge AI
+        uses: cadakerem/ReviewForge@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          ai_provider: "gemini" 
+          ai_api_key: ${{ secrets.GEMINI_API_KEY }}
