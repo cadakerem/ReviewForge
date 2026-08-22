@@ -75,7 +75,7 @@ def analyze_diff(diff_text: str, mode: str, custom_rules: str = "") -> str:
             "generationConfig": {
                 "temperature": 0.2,
                 "topP": 0.7,
-                "maxOutputTokens": 1024
+                "maxOutputTokens": 4096
             }
         }
         
@@ -99,7 +99,7 @@ def analyze_diff(diff_text: str, mode: str, custom_rules: str = "") -> str:
             ],
             temperature=0.2,
             top_p=0.7,
-            max_tokens=1024
+            max_tokens=4096
         )
         return completion.choices[0].message.content
     except Exception as e:
