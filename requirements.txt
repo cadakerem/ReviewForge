@@ -1,1 +1,5 @@
-# Add your python dependencies here (e.g., matplotlib>=3.5.0)
+fastapi
+uvicorn
+pydantic
+requests
+python-dotenv
