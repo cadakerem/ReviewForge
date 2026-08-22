@@ -23,10 +23,30 @@ async def github_webhook(
 
     if x_github_event in ["pull_request", "push"]:
         analysis_mode = route_analysis(x_github_event, payload)
+        
+        # URL for diff
+        diff_url = ""
+        if x_github_event == "pull_request":
+            diff_url = payload.get("pull_request", {}).get("diff_url", "")
+        elif x_github_event == "push":
+            diff_url = payload.get("compare", "") + ".diff"
+
+        review_result = "No diff URL provided."
+        if diff_url:
+            from src.github import fetch_diff
+            from src.nim_query import analyze_diff
+            
+            diff_text = fetch_diff(diff_url)
+            if not diff_text.startswith("[ERROR]"):
+                review_result = analyze_diff(diff_text, analysis_mode)
+            else:
+                review_result = diff_text
+
         return {
             "status": "accepted",
             "event": x_github_event,
-            "analysis_mode": analysis_mode
+            "analysis_mode": analysis_mode,
+            "review": review_result
         }
 
     return {"status": "ignored"}
