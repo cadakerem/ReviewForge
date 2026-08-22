@@ -23,6 +23,9 @@ def get_client():
             base_url = "https://api.groq.com/openai/v1"
         elif AI_PROVIDER == "openai":
             base_url = "https://api.openai.com/v1"
+        elif AI_PROVIDER == "gemini":
+            # Google's official OpenAI-compatible endpoint
+            base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
     return OpenAI(base_url=base_url, api_key=AI_API_KEY)
 
