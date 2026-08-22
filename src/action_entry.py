@@ -109,6 +109,8 @@ def main():
             issue_body = final_review_body + context_note
 
             from src.github import create_github_issue
+            # Auto-create issue if requested and permitted
+            issue_url = None
             auto_issue_env = os.getenv("AUTO_CREATE_ISSUES", "true").lower()
             if auto_issue_env == "true":
                 issue_resp = create_github_issue(repo_full_name, issue_title, issue_body, labels)
