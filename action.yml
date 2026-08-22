@@ -23,6 +23,10 @@ inputs:
     description: 'Model for deep analysis'
     required: false
     default: 'gemini-3.7-pro'
+  auto_create_issues:
+    description: 'Automatically create GitHub issues for critical vulnerabilities'
+    required: false
+    default: 'true'
 runs:
   using: 'composite'
   steps:
@@ -42,3 +46,4 @@ runs:
         AI_API_KEY: ${{ inputs.ai_api_key }}
         LIGHT_MODEL: ${{ inputs.light_model }}
         DEEP_MODEL: ${{ inputs.deep_model }}
+        AUTO_CREATE_ISSUES: ${{ inputs.auto_create_issues }}

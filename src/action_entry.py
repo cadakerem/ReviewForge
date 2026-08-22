@@ -109,10 +109,14 @@ def main():
             issue_body = final_review_body + context_note
 
             from src.github import create_github_issue
-            issue_resp = create_github_issue(repo_full_name, issue_title, issue_body, labels)
-            if issue_resp:
-                issue_url = issue_resp.get("html_url")
-                print(f"Critical issue found! Labeled GitHub Issue created: {issue_url}")
+            auto_issue_env = os.getenv("AUTO_CREATE_ISSUES", "true").lower()
+            if auto_issue_env == "true":
+                issue_resp = create_github_issue(repo_full_name, issue_title, issue_body, labels)
+                if issue_resp:
+                    issue_url = issue_resp.get("html_url")
+                    print(f"Critical issue found! Labeled GitHub Issue created: {issue_url}")
+            else:
+                print("Critical issue found, but auto_create_issues is disabled. Issue creation skipped.")
 
             if issue_url:
                 final_review_body += f"\n\n🚨 **CRITICAL:** A critical problem was detected in this PR. An issue was automatically created: [View Issue]({issue_url})."
