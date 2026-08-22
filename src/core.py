@@ -73,7 +73,7 @@ def process_webhook_event(event_name: str, payload: dict):
     if review_result.startswith("[ERROR]"):
         print(f"AI Reviewer failed: {review_result}")
         # Post generic error to the PR to avoid leaking internal error messages
-        comment_body = f"### ğŸ›¡ï¸ ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\nâš ï¸ AI analysis failed due to a service error. Please check the workflow logs for details."
+        comment_body = f"### \U0001f6e1\ufe0f ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\n\u26a0\ufe0f AI analysis failed due to a service error. Please check the workflow logs for details."
         if event_name == "pull_request" and pr_number:
             post_pr_comment(repo_full_name, pr_number, comment_body)
         elif event_name == "push" and commit_sha:
@@ -100,9 +100,9 @@ def process_webhook_event(event_name: str, payload: dict):
             # Add traceability note
             context_note = "\n\n---\n"
             if event_name == "pull_request" and pr_number:
-                context_note += f"ğŸ” *Detected by ReviewForge AI during review of [PR #{pr_number}].*"
+                context_note += f"\U0001f50d *Detected by ReviewForge AI during review of [PR #{pr_number}].*"
             elif event_name == "push" and commit_sha:
-                context_note += f"ğŸ” *Detected by ReviewForge AI during review of commit `{commit_sha[:7]}`.*"
+                context_note += f"\U0001f50d *Detected by ReviewForge AI during review of commit `{commit_sha[:7]}`.*"
 
             issue_body = final_review_body + context_note
 
@@ -119,16 +119,16 @@ def process_webhook_event(event_name: str, payload: dict):
                 print("Critical issue found, but auto_create_issues is disabled. Issue creation skipped.")
 
             if issue_url:
-                final_review_body += f"\n\nğŸš¨ **CRITICAL:** A critical problem was detected in this PR. An issue was automatically created: [View Issue]({issue_url})."
+                final_review_body += f"\n\n\U0001f6a8 **CRITICAL:** A critical problem was detected in this PR. An issue was automatically created: [View Issue]({issue_url})."
 
         except Exception as e:
             print(f"[Warning] JSON parse failed: {e}. Raw JSON block was cleaned from output.")
 
     # Warn if truncated
     if diff_truncated:
-        final_review_body += "\n\nâš ï¸ **Note:** The diff was too large and was truncated to prevent token exhaustion. Only the first part of the changes was reviewed."
+        final_review_body += "\n\n\u26a0\ufe0f **Note:** The diff was too large and was truncated to prevent token exhaustion. Only the first part of the changes was reviewed."
 
-    comment_body = f"### ğŸ›¡ï¸ ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\n{final_review_body}"
+    comment_body = f"### \U0001f6e1\ufe0f ReviewForge AI Analysis\n\n**Mode:** `{analysis_mode}`\n\n{final_review_body}"
 
     if event_name == "pull_request" and pr_number:
         post_pr_comment(repo_full_name, pr_number, comment_body)
