@@ -53,10 +53,18 @@ def main():
         print("Diff is empty. Nothing to review.")
         sys.exit(0)
 
+    # Check for custom rules
+    custom_rules = ""
+    rules_path = os.path.join(os.getenv("GITHUB_WORKSPACE", "."), ".reviewforge.md")
+    if os.path.exists(rules_path):
+        with open(rules_path, "r", encoding="utf-8") as f:
+            custom_rules = f.read()
+            print("Custom rules loaded from .reviewforge.md")
+
     analysis_mode = route_analysis(event_name, payload)
     print(f"Routing to: {analysis_mode}")
     
-    review_result = analyze_diff(diff_text, analysis_mode)
+    review_result = analyze_diff(diff_text, analysis_mode, custom_rules)
     
     # Check for issue creation JSON
     json_match = re.search(r'```json\s*(\{.*?"create_issue":\s*true.*?\})\s*```', review_result, re.DOTALL)

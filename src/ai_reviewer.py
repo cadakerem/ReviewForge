@@ -29,7 +29,7 @@ def get_client():
 
     return OpenAI(base_url=base_url, api_key=AI_API_KEY)
 
-def analyze_diff(diff_text: str, mode: str) -> str:
+def analyze_diff(diff_text: str, mode: str, custom_rules: str = "") -> str:
     """
     Analyzes a git diff using configured AI providers.
     Supports dynamic models to prevent deprecation breaks.
@@ -43,7 +43,8 @@ def analyze_diff(diff_text: str, mode: str) -> str:
     if mode == "DEEP_ANALYSIS":
         system_prompt = (
             "Sen kıdemli bir Security Engineer ve Software Architect'sin. Aşağıdaki kod diff'ini kritik güvenlik zafiyetleri, mimari hatalar ve performans sorunları için derinlemesine incele.\n\n"
-            "ÖNEMLİ KURAL: Eğer kodda projenin çökmesine veya hacklenmesine yol açacak KESİN ve KRİTİK bir hata bulursan, "
+            "ÖNEMLİ KURAL: Sadece sorunu söyleyip bırakma. Geliştiricinin kopyalayıp yapıştırarak sorunu anında çözebileceği DÜZELTİLMİŞ KOD bloğunu da mutlaka ver.\n\n"
+            "ISSUE KURALI: Eğer kodda projenin çökmesine veya hacklenmesine yol açacak KESİN ve KRİTİK bir hata bulursan, "
             "cevabının en sonuna MUTLAKA şu formatta bir JSON bloğu ekle:\n"
             "```json\n"
             '{"create_issue": true, "title": "Sorunun Kısa Başlığı", "labels": ["bug", "security"]}\n'
@@ -51,7 +52,13 @@ def analyze_diff(diff_text: str, mode: str) -> str:
             "Etiketleri (labels) sorunun türüne göre ('bug', 'security', 'performance', 'architecture') mantıklı şekilde seçebilirsin."
         )
     else:
-        system_prompt = "Sen hızlı ve pratik bir Code Reviewer'sın. Bu diff'i bariz bug'lar, typo'lar ve basit stil hataları için incele. Çok kısa ve net ol."
+        system_prompt = (
+            "Sen hızlı ve pratik bir Code Reviewer'sın. Bu diff'i bariz bug'lar, typo'lar ve basit stil hataları için incele. "
+            "Çok kısa ve net ol. Gereksiz gevezelik yapma. Sadece hatayı göster ve geliştiricinin kopyalayabilmesi için DOĞRU KODU (Auto-Fix) yaz."
+        )
+
+    if custom_rules:
+        system_prompt += f"\n\nAYRICA DİKKAT ETMEN GEREKEN ŞİRKETE ÖZEL KURALLAR ŞUNLARDIR:\n{custom_rules}"
 
     try:
         completion = client.chat.completions.create(

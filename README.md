@@ -17,6 +17,8 @@ Whenever a developer pushes code or opens a Pull Request, ReviewForge analyzes t
 - 🧠 **Multi-Provider AI:** Out-of-the-box support for Google Gemini, OpenAI, Nvidia NIM, Groq, or any OpenAI-compatible endpoint. No vendor lock-in!
 - 🚦 **Agentic Routing:** Smart routing ensures small UI tweaks get a fast, cheap review (e.g., `gemini-2.5-flash`), while complex core changes get deep security analysis (e.g., `gemini-3.1-pro` or `nemotron-3-ultra`).
 - 🚨 **Autonomous Issue Creation:** When the AI detects a critical bug or security flaw, it automatically opens a GitHub Issue with the correct labels (`bug`, `security`, `architecture`) and cross-references the offending PR.
+- 🪄 **Auto-Fix Code Blocks:** The AI doesn't just complain; it provides the exact corrected code block so developers can easily copy-paste and solve the issue instantly.
+- 📖 **Company-Specific Rules (`.reviewforge.md`):** Drop a `.reviewforge.md` file in your repository root to teach the AI your specific coding standards (e.g., "Always use strict typing", "Never use raw SQL").
 - ⚡ **Serverless:** Runs entirely on GitHub Actions. Zero servers to maintain. Zero webhook configs. Zero hosting costs.
 
 ## 🚀 Quick Setup (GitHub Actions)
