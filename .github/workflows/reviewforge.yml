@@ -16,7 +16,7 @@ jobs:
         uses: ./
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          ai_provider: "gemini" 
-          ai_api_key: ${{ secrets.GEMINI_API_KEY }}
-          deep_model: "gemini-3.7-flash"
-          light_model: "gemini-3.7-flash"
+          ai_provider: "groq" 
+          ai_api_key: ${{ secrets.GROQ_API_KEY }}
+          deep_model: "openai/gpt-oss-120b"
+          light_model: "openai/gpt-oss-120b"
