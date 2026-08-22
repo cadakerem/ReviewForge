@@ -18,11 +18,11 @@ inputs:
   light_model:
     description: 'Model for light analysis'
     required: false
-    default: 'gemini-1.5-flash'
+    default: 'gemini-3.7-flash'
   deep_model:
     description: 'Model for deep analysis'
     required: false
-    default: 'gemini-1.5-pro'
+    default: 'gemini-3.7-pro'
 runs:
   using: 'composite'
   steps:
