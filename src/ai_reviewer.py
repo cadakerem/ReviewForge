@@ -64,6 +64,32 @@ def analyze_diff(diff_text: str, mode: str, custom_rules: str = "") -> str:
     if custom_rules:
         system_prompt += f"\n\nADDITIONAL PROJECT-SPECIFIC RULES YOU MUST ENFORCE:\n{custom_rules}"
 
+    if AI_PROVIDER == "gemini":
+        # Native Gemini API implementation to avoid OpenAI compatibility layer Beta bugs
+        import requests
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={AI_API_KEY}"
+        
+        payload = {
+            "contents": [{"parts": [{"text": f"Please review the following diff:\n\n```diff\n{diff_text}\n```"}]}],
+            "systemInstruction": {"parts": [{"text": system_prompt}]},
+            "generationConfig": {
+                "temperature": 0.2,
+                "topP": 0.7,
+                "maxOutputTokens": 1024
+            }
+        }
+        
+        try:
+            resp = requests.post(url, headers={"Content-Type": "application/json"}, json=payload)
+            if resp.status_code == 200:
+                data = resp.json()
+                return data["candidates"][0]["content"]["parts"][0]["text"]
+            else:
+                return f"[ERROR] Native Gemini API failed: {resp.status_code} - {resp.text}"
+        except Exception as e:
+            return f"[ERROR] Native Gemini Request Error: {str(e)}"
+            
+    # Standard OpenAI implementation for OpenAI, Nvidia NIM, Groq
     try:
         completion = client.chat.completions.create(
             model=model_name,
