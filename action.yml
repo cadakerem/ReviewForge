@@ -1,0 +1,44 @@
+name: 'ReviewForge AI Code Reviewer'
+description: 'Autonomous AI code review for your pull requests and commits using Gemini, OpenAI, or Nvidia NIM.'
+branding:
+  icon: 'shield'
+  color: 'blue'
+inputs:
+  github_token:
+    description: 'GitHub token for posting comments'
+    required: true
+    default: ${{ github.token }}
+  ai_provider:
+    description: 'AI Provider (gemini, openai, nvidia, groq)'
+    required: true
+    default: 'gemini'
+  ai_api_key:
+    description: 'API key for the AI provider'
+    required: true
+  light_model:
+    description: 'Model for light analysis'
+    required: false
+    default: 'gemini-2.5-flash'
+  deep_model:
+    description: 'Model for deep analysis'
+    required: false
+    default: 'gemini-3.1-pro'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: pip install -r ${{ github.action_path }}/requirements.txt
+      shell: bash
+    - name: Run ReviewForge Action
+      run: python ${{ github.action_path }}/src/action_entry.py
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        AI_PROVIDER: ${{ inputs.ai_provider }}
+        AI_API_KEY: ${{ inputs.ai_api_key }}
+        LIGHT_MODEL: ${{ inputs.light_model }}
+        DEEP_MODEL: ${{ inputs.deep_model }}
