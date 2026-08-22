@@ -34,7 +34,7 @@ async def github_webhook(
         review_result = "No diff URL provided."
         if diff_url:
             from src.github import fetch_diff
-            from src.nim_query import analyze_diff
+            from src.ai_reviewer import analyze_diff
             
             diff_text = fetch_diff(diff_url)
             if not diff_text.startswith("[ERROR]"):
