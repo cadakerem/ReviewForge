@@ -43,6 +43,8 @@ def route_analysis(event_type: str, payload: dict) -> str:
         action = payload.get("action")
         pr_data = payload.get("pull_request", {})
         pr_title = pr_data.get("title", "").lower()
+        pr_number = pr_data.get("number")
+        repo_full_name = payload.get("repository", {}).get("full_name", "")
 
         print(f"[Router] PR: '{pr_title}' | Action: {action}")
 
@@ -50,7 +52,15 @@ def route_analysis(event_type: str, payload: dict) -> str:
         if action not in ["opened", "synchronize", "reopened"]:
             return "IGNORED_ACTION"
 
-        # Check PR title for critical keywords
+        # Fix #5: Fetch the actual changed files from GitHub API and inspect paths
+        if repo_full_name and pr_number:
+            from src.github import fetch_pr_files
+            pr_files = fetch_pr_files(repo_full_name, pr_number)
+            if has_critical_files(pr_files):
+                print(f"[Router] Decision: DEEP_ANALYSIS (Critical file paths in PR: {pr_files})")
+                return "DEEP_ANALYSIS"
+
+        # Fallback: check PR title for critical keywords
         critical_keywords = ["sec", "auth", "architecture", "refactor", "core", "payment", "admin"]
         if any(keyword in pr_title for keyword in critical_keywords):
             print("[Router] Decision: DEEP_ANALYSIS (Critical keyword in PR title)")
